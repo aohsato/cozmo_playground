@@ -1,0 +1,25 @@
+<!--  -->
+<launch>
+	<node pkg="usb_cam" type="usb_cam_node" name="usb_cam" output="screen">
+    <param name="camera_frame_id" value="mocap_camera" />
+    <param name="camera_name" value="mocap_camera" />
+    <param name="pixel_format" value="yuyv" />
+    <param name="video_device" value="/dev/video2" />
+    <remap from="/usb_cam/image_raw" to="/image_raw" />
+		<remap from="/usb_cam/camera_info" to="/camera_info" />
+  </node>
+
+	<node pkg="ar_track_alvar" type="individualMarkersNoKinect" name="ar_track_alvar" output="screen">
+		<param name="marker_size" value="5.4" />
+		<param name="max_new_marker_error" value="0.08" />
+		<param name="max_track_error" value="0.2" />
+		<param name="output_frame" value="mocap_camera" />
+		<remap from="camera_image" to="/image_raw" />
+		<remap from="camera_info" to="/camera_info" />
+	</node>
+
+  <node pkg="cozmo_playground" type="mocap.py" name="mocap" output="screen">
+    <param name="from_frame_id" value="/ar_marker_1" />
+    <param name="to_frame_id" value="/ar_marker_0" />
+  </node>
+</launch>
